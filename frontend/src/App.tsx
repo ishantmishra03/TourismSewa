@@ -19,8 +19,12 @@ import BusinessDetail from "./pages/business/BusinessDetailsPage";
 import BookingForm from "./pages/booking/BookingForm";
 import Bookings from "./pages/booking/Bookings";
 import { BookingConfirmationPage } from "./pages/booking/BookingConfirmationPage";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import PaymentConfirmation from "./pages/payment/PaymentConfirmation";
 
 const App: React.FC = () => {
+  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
   return (
     <div>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -54,7 +58,16 @@ const App: React.FC = () => {
               <Route path="/bookings" element={<Bookings />} />
               <Route
                 path="/booking-confirmation"
-                element={<BookingConfirmationPage />}
+                element={
+                  <Elements stripe={stripePromise}>
+                    <BookingConfirmationPage />
+                  </Elements>
+                }
+              />
+
+              <Route
+                path="/payment-confirmation"
+                element={<PaymentConfirmation />}
               />
             </Route>
 

@@ -1,7 +1,12 @@
 import { CheckCircle, Calendar, DollarSign, MessageCircle } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Experience } from "../../types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import api from "../../config/axios";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
+import type { StripeError } from "@stripe/stripe-js/dist/stripe-js";
 
 interface LocationState {
   experience: Experience | null;
@@ -11,9 +16,12 @@ interface LocationState {
 export function BookingConfirmationPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const state = location.state as LocationState;
   const experience = state?.experience ?? null;
+  const bookingId = state?.bookingId;
 
   useEffect(() => {
     if (!experience) {
@@ -21,8 +29,96 @@ export function BookingConfirmationPage() {
     }
   }, [experience, navigate]);
 
+  const stripe = useStripe();
+  const elements = useElements();
+
   const handleBackToHome = () => {
     navigate("/");
+  };
+
+  const handlePayNow = async () => {
+    setIsLoading(true);
+
+    if (!experience || !experience.pricePerPerson) {
+      setErrorMessage("Booking details are missing.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!stripe || !elements) {
+      setErrorMessage("Stripe.js has not loaded yet.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await api.post("/payments/create-payment-intent", {
+        bookingId,
+        amount: experience.pricePerPerson * 100,
+      });
+
+      const { clientSecret } = data;
+
+      // Retrieve the card element
+      const cardElement = elements.getElement(CardElement);
+
+      if (!cardElement) {
+        setErrorMessage("Card element not found.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Confirm the payment with Stripe using card details
+      const { error: stripeError, paymentIntent } =
+        await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement, // Pass the card element here
+          },
+        });
+
+      if (stripeError) {
+        handleStripeError(stripeError);
+      } else if (paymentIntent && paymentIntent.status === "succeeded") {
+        // Payment was successful
+        toast.success("Payment Successful!");
+        navigate("/payment-confirmation");
+      }
+    } catch (error: unknown) {
+      let message = "An error occurred during payment processing.";
+      if (isAxiosError(error) && error.response?.data.message) {
+        message = error.response?.data.message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStripeError = (error: StripeError) => {
+    let errorMessage = "An unknown error occurred during payment processing.";
+
+    switch (error.type) {
+      case "card_error":
+      case "validation_error":
+        errorMessage = `Card error: ${error.message}`;
+        break;
+      case "api_error":
+        errorMessage = `API error: ${error.message}`;
+        break;
+      case "idempotency_error":
+        errorMessage = `Idempotency error: ${error.message}`;
+        break;
+      case "authentication_error":
+        errorMessage = `Authentication error: ${error.message}`;
+        break;
+      default:
+        errorMessage = `Stripe error: ${error.message}`;
+        break;
+    }
+
+    setErrorMessage(errorMessage);
   };
 
   if (!experience) {
@@ -144,6 +240,25 @@ export function BookingConfirmationPage() {
                 <button className="flex-1 flex items-center justify-center gap-2 border-2 border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200">
                   <MessageCircle className="w-5 h-5" />
                   Contact Us
+                </button>
+              </div>
+
+              <div className="mt-8 bg-teal-50 p-6 rounded-lg shadow-lg">
+                <h3 className="text-2xl font-bold text-teal-600 dark:text-teal-400 mb-4">
+                  Secure Payment
+                </h3>
+                <div className="mb-6">
+                  <CardElement />
+                </div>
+                {errorMessage && (
+                  <p className="text-red-500 text-lg">{errorMessage}</p>
+                )}
+                <button
+                  onClick={handlePayNow}
+                  disabled={isLoading}
+                  className="w-full bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200"
+                >
+                  {isLoading ? "Processing..." : "Pay Now"}
                 </button>
               </div>
             </div>

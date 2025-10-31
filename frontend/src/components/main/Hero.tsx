@@ -30,15 +30,15 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{
         backgroundImage:
-          "url(https://images.pexels.com/photos/1647563/pexels-photo-1647563.jpeg?auto=compress&cs=tinysrgb&w=1920)",
+          "url(https://hub.wtm.com/wp-content/uploads/2018/10/nepal.png)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
       }}
     >
       {/* Layered Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-900/30 via-transparent to-blue-900/30"></div>
+      <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/50 to-black/70"></div>
+      <div className="absolute inset-0 bg-linear-to-r from-teal-900/30 via-transparent to-blue-900/30"></div>
 
       {/* Animated Particles Effect */}
       <div className="absolute inset-0 opacity-30">
@@ -57,7 +57,7 @@ export default function Hero() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
         <div className="text-center space-y-8 sm:space-y-10">
           {/* Tagline Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500/20 to-blue-500/20 backdrop-blur-md border border-teal-400/30 rounded-full shadow-lg">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-teal-500/20 to-blue-500/20 backdrop-blur-md border border-teal-400/30 rounded-full shadow-lg">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-teal-300 animate-pulse" />
             <span className="text-teal-200 font-medium uppercase tracking-wider text-xs sm:text-sm">
               Your Adventure Begins Here
@@ -70,10 +70,10 @@ export default function Hero() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight">
               Discover the{" "}
               <span className="relative inline-block">
-                <span className="bg-gradient-to-r from-teal-300 via-cyan-300 to-blue-300 text-transparent bg-clip-text animate-pulse">
+                <span className="bg-linear-to-r from-teal-300 via-cyan-300 to-blue-300 text-transparent bg-clip-text animate-pulse">
                   Soul of Nepal
                 </span>
-                <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-teal-400 to-blue-400 rounded-full transform scale-x-0 animate-[scaleIn_1s_ease-out_0.5s_forwards]"></span>
+                <span className="absolute -bottom-2 left-0 w-full h-1 bg-linear-to-r from-teal-400 to-blue-400 rounded-full transform scale-x-0 animate-[scaleIn_1s_ease-out_0.5s_forwards]"></span>
               </span>
             </h1>
 
@@ -112,7 +112,7 @@ export default function Hero() {
               />
               <button
                 onClick={handleSearch}
-                className="m-1 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-6 sm:px-8 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-teal-500/50 whitespace-nowrap text-sm sm:text-base"
+                className="m-1 bg-linear-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-6 sm:px-8 py-3 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-teal-500/50 whitespace-nowrap text-sm sm:text-base"
               >
                 Search
               </button>
@@ -123,7 +123,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
             <button
               onClick={scrollToExperiences}
-              className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-8 sm:px-10 py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-xl hover:shadow-2xl hover:shadow-teal-500/50"
+              className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-linear-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-8 sm:px-10 py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-xl hover:shadow-2xl hover:shadow-teal-500/50"
             >
               Explore Experiences
               <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
@@ -163,7 +163,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom Gradient Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-40 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-40 bg-linear-to-t from-black via-black/50 to-transparent pointer-events-none"></div>
 
       {/* Custom CSS for animations */}
       <style>{`

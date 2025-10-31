@@ -10,8 +10,11 @@ import authRouter from "./routes/auth/auth.routes.js";
 import experienceRouter from "./routes/experiences.routes.js";
 import businessRouter from "./routes/business.routes.js";
 import bookingRouter from "./routes/booking.routes.js";
+import paymentRouter from "./routes/payment.routes.js";
 
 import { connectDB2 } from "./config/db.js";
+import bodyParser from "body-parser";
+import { handleStripeWebhook } from "./controllers/payment.controller.js";
 
 await connectDB2();
 
@@ -32,6 +35,13 @@ app.use(
   })
 );
 
+// Stripe webhook
+app.post(
+  "/stripe-webhook",
+  bodyParser.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -44,6 +54,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/experiences", experienceRouter);
 app.use("/api/businesses", businessRouter);
 app.use("/api/bookings", bookingRouter);
+app.use("/api/payments", paymentRouter);
 
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);

@@ -16,6 +16,9 @@ import DigitalMap from "./pages/DigitalMap";
 
 import { BusinessesPage } from "./pages/business/BusinessesPage";
 import BusinessDetail from "./pages/business/BusinessDetailsPage";
+import BookingForm from "./pages/booking/BookingForm";
+import Bookings from "./pages/booking/Bookings";
+import { BookingConfirmationPage } from "./pages/booking/BookingConfirmationPage";
 
 const App: React.FC = () => {
   return (
@@ -29,7 +32,7 @@ const App: React.FC = () => {
             {/* // Experiences */}
             <Route path="/experiences" element={<Experiences />} />
             <Route path="/experience/:id" element={<ExperienceDetailPage />} />
-            
+            <Route path="/search" element={<SearchExperience />} />
 
             {/* // Businesses  */}
             <Route path="/businesses" element={<BusinessesPage />} />
@@ -45,8 +48,15 @@ const App: React.FC = () => {
               <Route path="/dashboard" element={<Dashboard />} />
 
               <Route path="/map" element={<DigitalMap />} />
+
+              {/* Bookings  */}
+              <Route path="/book-now" element={<BookingForm />} />
+              <Route path="/bookings" element={<Bookings />} />
+              <Route
+                path="/booking-confirmation"
+                element={<BookingConfirmationPage />}
+              />
             </Route>
-            
 
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFound />} />

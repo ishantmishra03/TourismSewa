@@ -9,6 +9,7 @@ import http from "http";
 import authRouter from "./routes/auth/auth.routes.js";
 import experienceRouter from "./routes/experiences.routes.js";
 import businessRouter from "./routes/business.routes.js";
+import bookingRouter from "./routes/booking.routes.js";
 
 import { connectDB2 } from "./config/db.js";
 
@@ -42,6 +43,7 @@ app.get("/", (_req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/experiences", experienceRouter);
 app.use("/api/businesses", businessRouter);
+app.use("/api/bookings", bookingRouter);
 
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);

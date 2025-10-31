@@ -39,8 +39,6 @@ export function ExperienceDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [experience, setExperience] = useState<Experience | null>(null);
 
-  
-
   const getTypeColor = (type: string) => {
     const colors = {
       popular: "bg-gradient-to-r from-yellow-400 to-amber-500 text-white",
@@ -309,7 +307,7 @@ export function ExperienceDetailPage() {
                 </div>
 
                 <button
-                  onClick={() => console.log("Book Now")}
+                  onClick={() => navigate("/book-now", { state: {experience} })}
                   disabled={!experience.isAvailable}
                   className={`w-full flex items-center justify-center gap-3 ${
                     experience.isAvailable

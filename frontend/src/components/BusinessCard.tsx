@@ -13,6 +13,7 @@ export function BusinessCard({ business }: BusinessCardProps) {
     navigate(path);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
       <div className="relative h-48 bg-gray-100 dark:bg-gray-700 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 text-sm italic select-none">

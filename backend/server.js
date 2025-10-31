@@ -7,6 +7,7 @@ import morgan from "morgan";
 import http from "http";
 
 import authRouter from "./routes/auth/auth.routes.js";
+import experienceRouter from "./routes/experiences.routes.js";
 
 import { connectDB2 } from "./config/db.js";
 
@@ -38,6 +39,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/experiences", experienceRouter);
 
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);

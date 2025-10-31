@@ -72,7 +72,7 @@ export function Auth() {
         toast.success(data.message);
         setIsAuthenticated(true);
         setUser(data.user);
-        navigate("/dashboard");
+        navigate("/map");
       }
     } catch (error: unknown) {
       let message = "Something went wrong";

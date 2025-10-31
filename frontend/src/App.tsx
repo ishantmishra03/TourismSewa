@@ -7,6 +7,10 @@ import { Auth } from "./pages/auth/Auth";
 import ProtectedRoute from "./components/security/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./components/extra/NotFound";
+import Experiences from "./pages/experience/Experiences";
+import { ExperienceDetailPage } from "./pages/experience/ExperienceDetails";
+import SearchExperience from "./pages/experience/SearchExperience";
+import DigitalMap from "./pages/DigitalMap";
 
 const App: React.FC = () => {
   return (
@@ -23,7 +27,17 @@ const App: React.FC = () => {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+
+              <Route path="/map" element={<DigitalMap/> }/>
+
+              {/* // Experiences */}
+              <Route path="/experiences" element={<Experiences />} />
+              <Route
+                path="/experience/:id"
+                element={<ExperienceDetailPage />}
+              />
             </Route>
+            <Route path="/search" element={<SearchExperience />} />
 
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFound />} />

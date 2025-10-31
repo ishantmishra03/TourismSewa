@@ -7,6 +7,7 @@ import morgan from "morgan";
 import http from "http";
 
 import authRouter from "./routes/auth/auth.routes.js";
+import businessAuthRouter from "./routes/auth/businessAuth.routes.js";
 import experienceRouter from "./routes/experiences.routes.js";
 import businessRouter from "./routes/business.routes.js";
 import bookingRouter from "./routes/booking.routes.js";
@@ -51,6 +52,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/auth2", businessAuthRouter);
 app.use("/api/experiences", experienceRouter);
 app.use("/api/businesses", businessRouter);
 app.use("/api/bookings", bookingRouter);

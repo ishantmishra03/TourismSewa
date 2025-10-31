@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+
 import { HomePage } from "./pages/Home";
 import { Navbar } from "./components/layout/Navbar";
 import PublicRoute from "./components/security/PublicRoute";
@@ -7,10 +8,14 @@ import { Auth } from "./pages/auth/Auth";
 import ProtectedRoute from "./components/security/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./components/extra/NotFound";
+
 import Experiences from "./pages/experience/Experiences";
 import { ExperienceDetailPage } from "./pages/experience/ExperienceDetails";
 import SearchExperience from "./pages/experience/SearchExperience";
 import DigitalMap from "./pages/DigitalMap";
+
+import { BusinessesPage } from "./pages/business/BusinessesPage";
+import BusinessDetail from "./pages/business/BusinessDetailsPage";
 
 const App: React.FC = () => {
   return (
@@ -21,23 +26,27 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
 
+            {/* // Experiences */}
+            <Route path="/experiences" element={<Experiences />} />
+            <Route path="/experience/:id" element={<ExperienceDetailPage />} />
+            
+
+            {/* // Businesses  */}
+            <Route path="/businesses" element={<BusinessesPage />} />
+            <Route path="/business/:id" element={<BusinessDetail />} />
+
+            {/* Allow only when logged out  */}
             <Route element={<PublicRoute />}>
               <Route path="/auth" element={<Auth />} />
             </Route>
 
+            {/* Allow only when logged in  */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
 
-              <Route path="/map" element={<DigitalMap/> }/>
-
-              {/* // Experiences */}
-              <Route path="/experiences" element={<Experiences />} />
-              <Route
-                path="/experience/:id"
-                element={<ExperienceDetailPage />}
-              />
+              <Route path="/map" element={<DigitalMap />} />
             </Route>
-            <Route path="/search" element={<SearchExperience />} />
+            
 
             {/* Catch-all 404 */}
             <Route path="*" element={<NotFound />} />

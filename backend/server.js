@@ -8,6 +8,7 @@ import http from "http";
 
 import authRouter from "./routes/auth/auth.routes.js";
 import experienceRouter from "./routes/experiences.routes.js";
+import businessRouter from "./routes/business.routes.js";
 
 import { connectDB2 } from "./config/db.js";
 
@@ -40,6 +41,7 @@ app.get("/", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/experiences", experienceRouter);
+app.use("/api/businesses", businessRouter);
 
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);

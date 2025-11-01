@@ -244,12 +244,12 @@ Only discuss booking if user explicitly includes [book] in their message. Otherw
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-center gap-3">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full blur-md opacity-50 animate-pulse"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-teal-400 to-cyan-400 rounded-full blur-md opacity-50 animate-pulse"></div>
               <div className="relative bg-linear-to-br from-teal-500 to-cyan-600 p-2.5 rounded-full">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-xl sm:text-2xl font-bold bg-linear-to-r from-teal-600 to-cyan-600 dark:from-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
               Tourism AI Assistant
             </h1>
           </div>
@@ -271,7 +271,7 @@ Only discuss booking if user explicitly includes [book] in their message. Otherw
             >
               {/* Avatar */}
               <div
-                className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md ${
+                className={`shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md ${
                   msg.sender === "user"
                     ? "bg-linear-to-br from-teal-500 to-cyan-600"
                     : "bg-linear-to-br from-purple-500 to-pink-500"
@@ -316,7 +316,7 @@ Only discuss booking if user explicitly includes [book] in their message. Otherw
           {/* Loading Indicator */}
           {loading && (
             <div className="flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md">
+              <div className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md">
                 <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="px-4 py-3 rounded-2xl rounded-bl-md bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 shadow-md backdrop-blur-sm">
@@ -368,7 +368,7 @@ Only discuss booking if user explicitly includes [book] in their message. Otherw
             <button
               type="submit"
               disabled={!input.trim()}
-              className="flex-shrink-0 p-3 sm:p-3.5 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-700 dark:disabled:to-gray-600 text-white rounded-full shadow-md hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95"
+              className="shrink-0 p-3 sm:p-3.5 bg-linear-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-700 dark:disabled:to-gray-600 text-white rounded-full shadow-md hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95"
             >
               <Send className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>

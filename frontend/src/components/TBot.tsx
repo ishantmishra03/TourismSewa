@@ -32,7 +32,6 @@ const ChatBot: React.FC = () => {
   const [open, setOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto-scroll
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
@@ -102,7 +101,7 @@ const ChatBot: React.FC = () => {
 
       {/* Chat Window */}
       {open && (
-        <div className="flex flex-col w-80 h-96 md:w-96 md:h-96 border border-gray-300 dark:border-gray-700 rounded-xl overflow-hidden shadow-xl bg-white dark:bg-gray-800">
+        <div className="flex flex-col w-72 md:w-96 h-96 border border-gray-300 dark:border-gray-700 rounded-xl overflow-hidden shadow-xl bg-white dark:bg-gray-800">
           {/* Header */}
           <div className="flex justify-between items-center p-3 bg-teal-600 text-white">
             <h2 className="font-bold text-lg">Tourist Bot</h2>
@@ -124,23 +123,24 @@ const ChatBot: React.FC = () => {
                 }`}
               >
                 {msg.sender === "user" ? (
-                  <div className="bg-teal-600 text-white px-3 py-2 rounded-xl max-w-xs wrap-break-word shadow-sm">
-                    {msg.content}
+                  <div className="bg-teal-600 text-white px-3 py-2 rounded-xl max-w-xs break-word shadow-sm">
+                    {msg.content as string}
                   </div>
                 ) : (
                   <div className="flex flex-col max-w-xs">
-                    {(msg.content as BotCard[]).map((card, cidx) => (
-                      <div
-                        key={cidx}
-                        className={`bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded-xl mb-2 shadow-sm`}
-                      >
-                        <div className="prose prose-sm dark:prose-invert wrap-break-word">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {`${cardIcons[card.type] || ""} ${card.content}`}
-                          </ReactMarkdown>
+                    {Array.isArray(msg.content) &&
+                      msg.content.map((card, cidx) => (
+                        <div
+                          key={cidx}
+                          className="bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded-xl mb-2 shadow-sm"
+                        >
+                          <div className="prose prose-sm dark:prose-invert wrap-break-word">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {`${cardIcons[card.type] || ""} ${card.content}`}
+                            </ReactMarkdown>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, type FormEvent } from "react";
 import { useAuth } from "../contexts/auth/useAuth";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Send, Sparkles } from "lucide-react";
+import { Send, Sparkles, Bot, User } from "lucide-react";
 import Groq from "groq-sdk";
 import api from "../config/axios";
 
@@ -51,7 +51,8 @@ const ChatBotPage: React.FC = () => {
         setExperiences(data.experiences || []);
         addMessage({
           sender: "bot",
-          content: `👋 **Welcome to the Tourism Assistant!** I can help you find and book experiences across Nepal.\n\n🗺️ I’ve loaded **${data.experiences.length} experiences** across Nepal. What would you like to explore today?`,
+          content: `👋 **Welcome to the Tourism Assistant!** I can help you explore and book experiences across Nepal.\n\n🗺️ I've loaded **${data.experiences.length} experiences** across Nepal. 
+\n💡 *If you want to book something, type [book] in your message.*\nExample: "I want to [book] the Pokhara Paragliding experience."`,
         });
       } catch {
         addMessage({
@@ -87,13 +88,12 @@ const ChatBotPage: React.FC = () => {
   // Get AI response with context
   const getAIResponse = async (query: string) => {
     try {
-      const systemContext = `You are a friendly tourism booking assistant for Nepal. 
+      const systemContext = `You are a friendly tourism assistant for Nepal. 
 Here are available experiences: ${experiences
         .map((e) => `${e.name}: ${e.description}`)
         .join(", ")}. 
-Guide users naturally through exploring and booking experiences. 
-If user says 'book', gather their name, email, contact, number of persons, and rough date (like tomorrow or next week). 
-Keep responses conversational and short.`;
+Guide users naturally through exploring and learning about experiences. 
+Only discuss booking if user explicitly includes [book] in their message. Otherwise, just provide helpful travel or experience information.`;
 
       const completion = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
@@ -208,86 +208,173 @@ Keep responses conversational and short.`;
 
     if (awaitingBooking) return handleBookingStep(text);
 
-    // Check if user wants to book a known experience
-    const match = experiences.find((e) =>
-      text.toLowerCase().includes(e.name.toLowerCase().split(" ")[0])
-    );
+    const lowerText = text.toLowerCase();
 
-    if (match) {
-      setSelectedExp(match);
-      setAwaitingBooking(true);
-      setBookingStep({ experienceId: match._id });
-      return addMessage({
-        sender: "bot",
-        content: `🏞️ **${match.name}** sounds amazing! 🌄 Let's book it.\n\nWhat's your **full name**?`,
-      });
+    // Only allow booking if user includes [book]
+    if (lowerText.includes("[book]")) {
+      const match = experiences.find((e) =>
+        lowerText.includes(e.name.toLowerCase().split(" ")[0])
+      );
+
+      if (match) {
+        setSelectedExp(match);
+        setAwaitingBooking(true);
+        setBookingStep({ experienceId: match._id });
+        return addMessage({
+          sender: "bot",
+          content: `🏞️ **${match.name}** sounds amazing! 🌄 Let's book it.\n\nWhat's your **full name**?`,
+        });
+      } else {
+        return addMessage({
+          sender: "bot",
+          content: "⚠️ Please mention the experience name you want to [book].",
+        });
+      }
     }
 
-    // Otherwise, let AI assist
+    // Otherwise just chat normally
     const aiResponse = await getAIResponse(text);
     addMessage({ sender: "bot", content: aiResponse });
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <header className="p-4 flex items-center justify-center bg-teal-600 dark:bg-teal-500 text-white shadow-md">
-        <Sparkles size={18} className="mr-2" />
-        <h1 className="font-semibold text-lg">Tourism AI Assistant</h1>
+    <div className="flex flex-col h-screen bg-linear-to-br from-slate-50 via-teal-50 to-cyan-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-900">
+      {/* Header */}
+      <header className="relative backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full blur-md opacity-50 animate-pulse"></div>
+              <div className="relative bg-linear-to-br from-teal-500 to-cyan-600 p-2.5 rounded-full">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+              Tourism AI Assistant
+            </h1>
+          </div>
+        </div>
       </header>
 
+      {/* Chat Messages */}
       <div
         ref={chatRef}
-        className="flex-1 overflow-y-auto p-4 space-y-3 max-w-2xl mx-auto w-full"
+        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 scroll-smooth"
       >
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
+        <div className="max-w-4xl mx-auto space-y-4">
+          {messages.map((msg, i) => (
             <div
-              className={`px-4 py-3 rounded-2xl text-sm shadow-md leading-relaxed max-w-[80%] ${
-                msg.sender === "user"
-                  ? "bg-teal-600 text-white rounded-br-none"
-                  : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none"
-              }`}
+              key={i}
+              className={`flex items-end gap-2 sm:gap-3 ${
+                msg.sender === "user" ? "flex-row-reverse" : "flex-row"
+              } animate-in fade-in slide-in-from-bottom-2 duration-300`}
             >
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {msg.content}
-              </ReactMarkdown>
+              {/* Avatar */}
+              <div
+                className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md ${
+                  msg.sender === "user"
+                    ? "bg-linear-to-br from-teal-500 to-cyan-600"
+                    : "bg-linear-to-br from-purple-500 to-pink-500"
+                }`}
+              >
+                {msg.sender === "user" ? (
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                ) : (
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                )}
+              </div>
+
+              {/* Message Bubble */}
+              <div
+                className={`group relative max-w-[85%] sm:max-w-[75%] lg:max-w-[65%] ${
+                  msg.sender === "user" ? "items-end" : "items-start"
+                }`}
+              >
+                <div
+                  className={`px-4 py-3 rounded-2xl shadow-md backdrop-blur-sm transition-all duration-200 hover:shadow-lg ${
+                    msg.sender === "user"
+                      ? "bg-linear-to-br from-teal-500 to-cyan-600 text-white rounded-br-md"
+                      : "bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-gray-100 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-md"
+                  }`}
+                >
+                  <div
+                    className={`prose prose-sm sm:prose-base max-w-none ${
+                      msg.sender === "user"
+                        ? "prose-invert"
+                        : "dark:prose-invert"
+                    }`}
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="text-gray-500 dark:text-gray-400 text-sm italic animate-pulse">
-            Assistant is thinking...
-          </div>
-        )}
+          ))}
+
+          {/* Loading Indicator */}
+          {loading && (
+            <div className="flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-md">
+                <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
+              <div className="px-4 py-3 rounded-2xl rounded-bl-md bg-white/90 dark:bg-gray-800/90 border border-gray-200/50 dark:border-gray-700/50 shadow-md backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <div
+                      className="w-2 h-2 bg-teal-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-teal-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-teal-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Assistant is thinking...
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex items-center p-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
-      >
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={
-            awaitingBooking
-              ? "Enter booking details..."
-              : "Ask or search experiences..."
-          }
-          className="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
-        />
-        <button
-          type="submit"
-          className="p-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-400 text-white rounded-full"
-        >
-          <Send size={18} />
-        </button>
-      </form>
+      {/* Input Form */}
+      <div className="border-t border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center gap-2 sm:gap-3"
+          >
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={
+                  awaitingBooking
+                    ? "Enter booking details..."
+                    : "Ask about experiences or type [book] to book..."
+                }
+                className="w-full px-4 sm:px-5 py-3 sm:py-3.5 text-sm sm:text-base bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-transparent text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="flex-shrink-0 p-3 sm:p-3.5 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 disabled:from-gray-300 disabled:to-gray-400 dark:disabled:from-gray-700 dark:disabled:to-gray-600 text-white rounded-full shadow-md hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 transform hover:scale-105 active:scale-95"
+            >
+              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

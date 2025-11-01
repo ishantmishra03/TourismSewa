@@ -1,6 +1,13 @@
-import httpx, asyncio
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))  # root path
 
+import httpx, asyncio
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from config import API_KEY
+
+app = FastAPI()
+
 
 system_prompt = """
 You are a travel guide for Nepal.
@@ -19,7 +26,7 @@ async def get_response(user_input: str) -> dict:
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
     data = {
-        "model":"gpt-4.1",
+        "model": "gpt-4.1",
         "messages":[
             {"role":"system","content":system_prompt},
             {"role":"user","content":user_input}
@@ -44,3 +51,12 @@ async def get_response(user_input: str) -> dict:
     except Exception as e:
         print("🚨 Unexpected error:", e)
         return {"error": "⚠️ Backend error. Please try again later."}
+
+# FastAPI endpoint
+@app.post("/api/get_response")
+async def api_get_response(request: Request):
+    data = await request.json()
+    user_input = data.get("user_input", "")
+    if not user_input:
+        return JSONResponse({"error": "No user_input provided"}, status_code=400)
+    return await get_response(user_input)

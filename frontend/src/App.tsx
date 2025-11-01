@@ -34,7 +34,6 @@ const App: React.FC = () => {
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/chat" element={<ChatBotPage />} />
 
             {/* // Experiences */}
             <Route path="/experiences" element={<Experiences />} />
@@ -53,6 +52,8 @@ const App: React.FC = () => {
             {/* Allow only when logged in  */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+
+              <Route path="/chat" element={<ChatBotPage />} />
 
               <Route path="/map" element={<DigitalMap />} />
 

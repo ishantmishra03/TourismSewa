@@ -100,10 +100,11 @@ Keep responses conversational and short.`;
         messages: [
           { role: "system", content: systemContext },
           ...messages.map((m) => ({
-            role: m.sender === "user" ? "user" : "assistant",
-            content: m.content,
+            role:
+              m.sender === "user" ? ("user" as const) : ("assistant" as const),
+            content: String(m.content),
           })),
-          { role: "user", content: query },
+          { role: "user" as const, content: query },
         ],
       });
 

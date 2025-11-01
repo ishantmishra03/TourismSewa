@@ -22,6 +22,7 @@ import { BookingConfirmationPage } from "./pages/booking/BookingConfirmationPage
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import PaymentConfirmation from "./pages/payment/PaymentConfirmation";
+
 import ChatBotPage from "./pages/ChatBot";
 
 const App: React.FC = () => {

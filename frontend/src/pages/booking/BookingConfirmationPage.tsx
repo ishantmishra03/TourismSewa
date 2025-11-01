@@ -245,7 +245,7 @@ export function BookingConfirmationPage() {
 
               <div className="mt-8 bg-teal-50 p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold text-teal-600 dark:text-teal-400 mb-4">
-                  Secure Payment
+                  Secure Payment ( Pay Now )
                 </h3>
                 <div className="mb-6">
                   <CardElement />

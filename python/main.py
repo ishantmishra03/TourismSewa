@@ -17,6 +17,10 @@ app.add_middleware(
 class QueryModel(BaseModel):
     user_input: str
 
+@app.get("/")
+def root():
+    return "Hello"
+
 @app.post("/api/query")
 async def query(data: QueryModel):
     try:

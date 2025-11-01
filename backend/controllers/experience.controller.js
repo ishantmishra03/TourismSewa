@@ -218,7 +218,7 @@ Return the 3–5 most relevant experiences as JSON array with all their fields. 
         system: systemPrompt,
         user: q,
         temperature: 0.7,
-        max_tokens: 1000,
+        max_tokens: 2000,
       });
 
       try {

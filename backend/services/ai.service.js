@@ -7,7 +7,7 @@ export class GroqService {
     system,
     user,
     temperature = 0.7,
-    max_tokens = 1000,
+    max_tokens = 2000,
     model = "llama-3.3-70b-versatile",
   }) {
     const response = await client.chat.completions.create({

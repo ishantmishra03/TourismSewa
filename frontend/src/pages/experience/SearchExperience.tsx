@@ -15,16 +15,20 @@ export default function SearchExperience() {
   useEffect(() => {
     const fetchExperiences = async () => {
       try {
-        const { data } = await api.get(
-          `/experiences/search?q=${searchParams}`
-        );
-        if (data.success) {
-          const parsed =
-            typeof data.experiences === "string"
-              ? JSON.parse(data.experiences)
-              : data.experiences;
-          setExperiences(parsed);
+        const { data } = await api.get(`/experiences/search?q=${searchParams}`);
+        console.log(data);
+        let parsed: Experience[] = [];
+        if (Array.isArray(data.experiences)) {
+          parsed = data.experiences;
+        } else {
+          try {
+            parsed = JSON.parse(data.experiences);
+          } catch (err) {
+            console.error("Failed to parse experiences JSON", err);
+            parsed = [];
+          }
         }
+        setExperiences(parsed);
       } catch (error: unknown) {
         let message = "Something went wrong";
         if (isAxiosError(error) && error.response?.data.message) {

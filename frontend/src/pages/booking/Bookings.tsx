@@ -112,46 +112,50 @@ export default function Bookings() {
           <Elements stripe={stripePromise}>
             <div className="space-y-4">
               {filteredBookings.map((booking) => (
-                <div
-                  key={booking._id}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 flex flex-col sm:flex-row sm:justify-between gap-4"
-                >
-                  <div className="flex flex-col gap-1">
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                      {booking.experience?.name || "Experience"}
-                    </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Booking ID: {booking._id}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Date: {formatDate(booking.date)}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Total: ${booking.totalAmount?.toFixed(2) || "0.00"}
-                    </p>
-                  </div>
+  <div
+    key={booking._id}
+    className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 flex flex-col sm:flex-row sm:justify-between gap-4"
+  >
+    <div className="flex flex-col gap-1">
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+        {booking.experience?.name || "Experience"}
+      </h2>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Booking ID: {booking._id}
+      </p>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Date: {formatDate(booking.date)}
+      </p>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Total: ${booking.totalAmount?.toFixed(2) || "0.00"}
+      </p>
+    </div>
 
-                  <div className="flex flex-col gap-2 items-start sm:items-end w-full sm:w-auto">
-                    <p
-                      className={`text-sm font-semibold ${
-                        booking.isPaid
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-red-600 dark:text-red-400"
-                      }`}
-                    >
-                      {booking.isPaid ? "Paid" : "Not Paid"}
-                    </p>
+    <div className="flex flex-col gap-2 items-start sm:items-end w-full sm:w-auto">
+      <p
+        className={`text-sm font-semibold ${
+          booking.isPaid
+            ? "text-green-600 dark:text-green-400"
+            : "text-red-600 dark:text-red-400"
+        }`}
+      >
+        {booking.isPaid ? "Paid" : "Not Paid"}
+      </p>
 
-                    {/* PayNow Component */}
-                    {!booking.isPaid && <PayNow booking={booking} />}
-                    {booking.isPaid && (
-                      <p className="text-green-600 font-semibold">
-                        Payment Completed
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+      {/* ✅ FIX HERE */}
+      {!booking.isPaid && (
+        <Elements stripe={stripePromise}>
+          <PayNow booking={booking} />
+        </Elements>
+      )}
+
+      {booking.isPaid && (
+        <p className="text-green-600 font-semibold">Payment Completed</p>
+      )}
+    </div>
+  </div>
+))}
+
             </div>
           </Elements>
         )}

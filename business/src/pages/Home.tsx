@@ -137,8 +137,6 @@ export default function BusinessAuth() {
     if (!registerData.address) newErrors.address = "Address is required";
     if (!registerData.description)
       newErrors.description = "Description is required";
-    if (registerData.categories.length === 0)
-      newErrors.categories = "Select at least one category";
     setRegisterErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

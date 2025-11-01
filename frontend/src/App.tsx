@@ -22,6 +22,7 @@ import { BookingConfirmationPage } from "./pages/booking/BookingConfirmationPage
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import PaymentConfirmation from "./pages/payment/PaymentConfirmation";
+import ChatBotPage from "./pages/ChatBot";
 
 const App: React.FC = () => {
   const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -32,6 +33,7 @@ const App: React.FC = () => {
         <main>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/chat" element={<ChatBotPage />} />
 
             {/* // Experiences */}
             <Route path="/experiences" element={<Experiences />} />

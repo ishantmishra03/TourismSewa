@@ -12,6 +12,7 @@ import experienceRouter from "./routes/experiences.routes.js";
 import businessRouter from "./routes/business.routes.js";
 import bookingRouter from "./routes/booking.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
+import reviewRouter from "./routes/review.routes.js";
 
 import { connectDB2 } from "./config/db.js";
 import bodyParser from "body-parser";
@@ -57,6 +58,7 @@ app.use("/api/experiences", experienceRouter);
 app.use("/api/businesses", businessRouter);
 app.use("/api/bookings", bookingRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/reviews", reviewRouter);
 
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);

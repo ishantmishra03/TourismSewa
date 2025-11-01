@@ -12,7 +12,7 @@ export const createReview = async (req, res) => {
       return res.status(404).json({ error: "Experience not found." });
 
     const existingReview = await Review.findOne({
-      tourist: req.user._id,
+      tourist: req.userId,
       experience: experienceId,
     });
     if (existingReview)
@@ -21,7 +21,7 @@ export const createReview = async (req, res) => {
         .json({ error: "You have already reviewed this experience." });
 
     const review = await Review.create({
-      tourist: req.user._id,
+      tourist: req.userId,
       experience: experienceId,
       rating,
       comment,
@@ -39,7 +39,7 @@ export const getReviews = async (req, res) => {
       ? { experience: req.query.experienceId, isApproved: true }
       : { isApproved: true };
     const reviews = await Review.find(filter)
-      .populate("tourist", "username email")
+      .populate("tourist", "name email")
       .populate("experience", "name location");
     res.json({ success: true, reviews });
   } catch (err) {
@@ -68,7 +68,7 @@ export const deleteReview = async (req, res) => {
       !req.user.isAdmin &&
       review.tourist.toString() !== req.user._id.toString()
     )
-      return res.status(403).json({success: false, error: "Not authorized." });
+      return res.status(403).json({ success: false, error: "Not authorized." });
 
     await review.deleteOne();
     res.json({ success: true, message: "Review deleted." });

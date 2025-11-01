@@ -30,6 +30,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
+interface Review {
+  _id: string;
+  rating: number;
+  comment: string;
+  tourist: {
+    name: string;
+  };
+}
+
 export function ExperienceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -38,6 +47,12 @@ export function ExperienceDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [experience, setExperience] = useState<Experience | null>(null);
+
+  // Reviews
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -75,10 +90,51 @@ export function ExperienceDetailPage() {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        const { data } = await api.get(`/reviews?experienceId=${id}`);
+        if (data.success) {
+          setReviews(data.reviews);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchExperience();
+    fetchReviews();
   }, [id]);
 
-  // Loading state
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (rating < 1 || rating > 5) return toast.error("Select a valid rating");
+    if (!comment.trim()) return toast.error("Comment cannot be empty");
+
+    setSubmitting(true);
+    try {
+      const { data } = await api.post("/reviews", {
+        experienceId: id,
+        rating,
+        comment,
+      });
+      if (data.success) {
+        toast.success("Review submitted! Pending approval.");
+        setRating(0);
+        setComment("");
+      }
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.data.error) {
+        toast.error(error.response.data.error);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -92,7 +148,6 @@ export function ExperienceDetailPage() {
     );
   }
 
-  // Not Found state
   if (notFound || !experience) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -111,7 +166,6 @@ export function ExperienceDetailPage() {
     );
   }
 
-  // Actual experience detail rendering
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -135,8 +189,6 @@ export function ExperienceDetailPage() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
-
-        {/* Favorite Button */}
         <div className="absolute top-6 right-6 flex gap-3">
           <button
             onClick={() => setIsFavorite(!isFavorite)}
@@ -151,8 +203,6 @@ export function ExperienceDetailPage() {
             />
           </button>
         </div>
-
-        {/* Hero Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-12">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -206,7 +256,6 @@ export function ExperienceDetailPage() {
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                 {experience.description}
               </p>
-              {/* New Duration and Price */}
               <div className="mt-6 p-4 bg-teal-100 dark:bg-teal-800 rounded-lg shadow-md hover:bg-teal-200 dark:hover:bg-teal-700 transition-all duration-300">
                 <p className="text-lg font-semibold text-gray-900 dark:text-white">
                   <span className="text-teal-600 dark:text-teal-400">
@@ -223,7 +272,7 @@ export function ExperienceDetailPage() {
               </div>
             </div>
 
-            {/* Business Info */}
+            {/* Hosted By */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 sm:p-8">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Hosted By
@@ -243,7 +292,7 @@ export function ExperienceDetailPage() {
               </div>
             </div>
 
-            {/* Leaflet Map Section */}
+            {/* Location Map */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 sm:p-8">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 Location
@@ -276,9 +325,88 @@ export function ExperienceDetailPage() {
                 </MapContainer>
               </div>
             </div>
+
+            {/* Reviews Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 sm:p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                Reviews
+              </h2>
+
+              {/* Review Form */}
+              <form onSubmit={handleSubmitReview} className="mb-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    Your Rating:
+                  </span>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star
+                      key={i}
+                      className={`w-6 h-6 cursor-pointer ${
+                        i <= rating
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-400 dark:text-gray-500"
+                      }`}
+                      onClick={() => setRating(i)}
+                    />
+                  ))}
+                </div>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  rows={3}
+                  placeholder="Write your review..."
+                  className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-900 dark:text-white"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-semibold transition-all duration-200 disabled:opacity-50"
+                >
+                  {submitting ? "Submitting..." : "Submit Review"}
+                </button>
+              </form>
+
+              {/* Existing Reviews */}
+              {reviews.length === 0 ? (
+                <p className="text-gray-600 dark:text-gray-300">
+                  No reviews yet.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {reviews.map((r) => (
+                    <div
+                      key={r._id}
+                      className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {r.tourist.name}
+                        </span>
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Star
+                              key={i}
+                              className={`w-5 h-5 ${
+                                i <= r.rating
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-gray-400 dark:text-gray-500"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {r.comment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Right - Booking Card */}
+          {/* Right Booking Card */}
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8 sticky top-24">
               <div className="space-y-6">
@@ -307,7 +435,9 @@ export function ExperienceDetailPage() {
                 </div>
 
                 <button
-                  onClick={() => navigate("/book-now", { state: {experience} })}
+                  onClick={() =>
+                    navigate("/book-now", { state: { experience } })
+                  }
                   disabled={!experience.isAvailable}
                   className={`w-full flex items-center justify-center gap-3 ${
                     experience.isAvailable

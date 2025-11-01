@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FormEvent } from "react";
+import React, { useState, useEffect, useRef, type FormEvent } from "react";
 import { useAuth } from "../contexts/auth/useAuth";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -155,7 +155,7 @@ Keep responses conversational and short.`;
 
   // Create booking
   const createBooking = async (details: BookingDetails) => {
-    if (!user?._id && !user?.id)
+    if (!user?.id)
       return addMessage({
         sender: "bot",
         content: "⚠️ You must be logged in to book.",
@@ -164,7 +164,7 @@ Keep responses conversational and short.`;
     try {
       setLoading(true);
       const payload = {
-        tourist: user._id || user.id,
+        tourist: user.id,
         experience: details.experienceId || selectedExp?._id,
         date: details.date,
         contactNumber: details.contactNumber,
@@ -228,7 +228,7 @@ Keep responses conversational and short.`;
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="flex flex-col min-h-screen bg-linear-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <header className="p-4 flex items-center justify-center bg-teal-600 dark:bg-teal-500 text-white shadow-md">
         <Sparkles size={18} className="mr-2" />
         <h1 className="font-semibold text-lg">Tourism AI Assistant</h1>
